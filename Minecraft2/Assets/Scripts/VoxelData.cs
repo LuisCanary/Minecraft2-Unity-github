@@ -4,14 +4,17 @@ using UnityEngine;
 
 public static class VoxelData
 {
-    public static readonly int ChunkWidth = 5;
-    public static readonly int ChunkHeight = 5;
-    public static readonly int WorldSizeInChunks = 8;
+    public static readonly int ChunkWidth = 16;
+    public static readonly int ChunkHeight = 128;
+    public static readonly int WorldSizeInChunks = 100;
 
     public static int WorldSizeInVoxels
     {
         get { return WorldSizeInChunks * ChunkWidth; }
     }
+
+    public static readonly int ViewDistanceInChunks = 5;
+
 
     public static readonly int TextureAtLastSizeInBlock = 4;
     public static float NormalizedTextureSize
