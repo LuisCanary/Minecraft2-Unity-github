@@ -20,24 +20,29 @@ public class Chunk
 
     World world;
 
-    public Chunk (ChunkCoord _coord,World _world)
+    public Chunk (ChunkCoord _coord,World _world, bool generateOnLoad)
     {
         coord = _coord;
-
         world = _world;
+        if (generateOnLoad)
+            Init();
+    }
+
+
+    public void Init()
+    {
         chunkObject = new GameObject();
         meshFilter = chunkObject.AddComponent<MeshFilter>();
         meshRenderer = chunkObject.AddComponent<MeshRenderer>();
 
         meshRenderer.material = world.material;
         chunkObject.transform.SetParent(world.transform);
-        chunkObject.transform.position = new Vector3(coord.x*VoxelData.ChunkWidth,0f,coord.z*VoxelData.ChunkWidth);
-        chunkObject.name = "Chunk" + coord.x + "," +coord.z ;
+        chunkObject.transform.position = new Vector3(coord.x * VoxelData.ChunkWidth, 0f, coord.z * VoxelData.ChunkWidth);
+        chunkObject.name = "Chunk" + coord.x + "," + coord.z;
 
         PopulateVoxelMap();
         CreateMeshData();
         CreateMesh();
-     
     }
 
     private void Start()

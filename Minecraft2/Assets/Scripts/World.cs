@@ -20,6 +20,8 @@ public class World : MonoBehaviour
     ChunkCoord playerChunkCoord;
     ChunkCoord playerLastChunkCoord;
 
+    List<ChunkCoord> chunksToCreate = new List<ChunkCoord>();
+
     private void Start()
     {
         Random.InitState(seed);
@@ -33,10 +35,10 @@ public class World : MonoBehaviour
     {
         playerChunkCoord = GetChunkCoordFromVector3(player.position);
 
-        //if (!playerChunkCoord.Equals(playerLastChunkCoord))
-        //{
-        //    CheckViewDistance();
-        //}
+        if (!playerChunkCoord.Equals(playerLastChunkCoord))
+        {
+            CheckViewDistance();
+        }
     }
 
     void GenerateWorld()
@@ -63,6 +65,7 @@ public class World : MonoBehaviour
     void CheckViewDistance()
     {
         ChunkCoord coord = GetChunkCoordFromVector3(player.position);
+        playerLastChunkCoord = playerChunkCoord;
 
         List<ChunkCoord> previouslyActiveChunks = new List<ChunkCoord>(activeChunks);
 
@@ -74,13 +77,13 @@ public class World : MonoBehaviour
                 {
                     if (chunks[x,z]==null)
                     {
-                        CreateNewChunk(x,z);
+                        chunksToCreate.Add(new ChunkCoord(x, z));
                     }
                     else if(!chunks[x,z].isActive)
                     {
                         chunks[x, z].isActive = true;
-                        activeChunks.Add(new ChunkCoord(x, z));
                     }
+                    activeChunks.Add(new ChunkCoord(x, z));
                 }
                 for (int i = 0; i < previouslyActiveChunks.Count; i++)
                 {
@@ -164,11 +167,7 @@ public class World : MonoBehaviour
 
     }
 
-    void CreateNewChunk(int x, int z)
-    {
-        chunks[x, z] = new Chunk(new ChunkCoord(x, z), this);
-        activeChunks.Add(new ChunkCoord(x,z));
-    }
+   
 
     bool IsChunkInWorld(ChunkCoord coord)
     {
