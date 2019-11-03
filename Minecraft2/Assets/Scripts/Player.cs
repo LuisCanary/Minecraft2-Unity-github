@@ -56,7 +56,7 @@ public class Player : MonoBehaviour
     private void Update()
     {
         GetPlayerInputs();
-		placeCursorBlock();
+		placeCursorBlocks();
     }
     void Jump()
     {
@@ -117,7 +117,7 @@ public class Player : MonoBehaviour
 		}
     }
 
-	private void placeCursorBlock()
+	private void placeCursorBlocks()
 	{
 		float step = checkIncrement;
 		Vector3 lastPos = new Vector3();

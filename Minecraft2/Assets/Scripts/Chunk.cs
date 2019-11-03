@@ -20,10 +20,12 @@ public class Chunk
 
     public byte[,,] voxelMap = new byte[VoxelData.ChunkWidth, VoxelData.ChunkHeight, VoxelData.ChunkWidth];
 
+	public Queue<VoxelMod> modifications = new Queue<VoxelMod>();
+
     World world;
 
 	private bool _isActive;
-	public bool isVoxelMapPopulate = false;
+	public bool isVoxelMapPopulated = false;
 
     public Chunk (ChunkCoord _coord,World _world, bool generateOnLoad)
     {
@@ -34,7 +36,6 @@ public class Chunk
         if (generateOnLoad)
             Init();
     }
-
 
     public void Init()
     {
@@ -48,20 +49,11 @@ public class Chunk
 
         chunkObject.transform.SetParent(world.transform);
         chunkObject.transform.position = new Vector3(coord.x * VoxelData.ChunkWidth, 0f, coord.z * VoxelData.ChunkWidth);
-        chunkObject.name = "Chunk" + coord.x + "," + coord.z;
+        chunkObject.name = "Chunk" + coord.x + ", " + coord.z;
 
         PopulateVoxelMap();
 		UpdateChunk();
     }
-
-    private void Start()
-    {
-        world = GameObject.Find("World").GetComponent<World>();
-        PopulateVoxelMap();
-		UpdateChunk();
-        CreateMesh();
-    }
-
 
     void PopulateVoxelMap()
     {
@@ -76,11 +68,20 @@ public class Chunk
             }
         }
 
-		isVoxelMapPopulate = true;
+		isVoxelMapPopulated = true;
     }
 
-    void UpdateChunk()
+    public void UpdateChunk()
     {
+		while (modifications.Count>0)
+		{
+			VoxelMod v = modifications.Dequeue();
+			Vector3 pos = v.position -= position;
+			voxelMap[(int)pos.x, (int)pos.y, (int)pos.z] = v.id;
+
+		}
+
+
 		ClearMeshData();
 
         for (int y = 0; y < VoxelData.ChunkHeight; y++)
@@ -297,7 +298,7 @@ public class ChunkCoord
 		int zCheck = Mathf.FloorToInt(pos.z);
 
 		x = xCheck / VoxelData.ChunkWidth;
-		z = zCheck = VoxelData.ChunkWidth;
+		z = zCheck / VoxelData.ChunkWidth;
 
 	}
 

@@ -14,11 +14,16 @@ public class BiomeAttributes :ScriptableObject
 
 	[Header("Tress")]
 	public float treeZoneScale=1.3f;
+	[Range(0.1f,1f)]
 	public float treeZoneThreshold=0.6f;
-			
+	public float treePlacementScale = 15f;
+	[Range(0.1f, 1f)]
+	public float treePlacementThreshold = 0.8f;
 
+	public int maxTreeHeight = 12;
+	public int minTreeHeight = 5;
 
-    public Lode[] lodes;
+	public Lode[] lodes;
 }
 
 [System.Serializable]
