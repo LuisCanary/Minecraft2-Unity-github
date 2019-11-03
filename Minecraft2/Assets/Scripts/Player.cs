@@ -17,7 +17,7 @@ public class Player : MonoBehaviour
     public float gravity =-9.8f;
 
     public float playerWidth=0.15f;
-
+	public float boundsTolerance = 0.1f;
 
     private float horizontal;
     private float vertical;
