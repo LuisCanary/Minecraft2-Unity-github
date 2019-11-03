@@ -219,7 +219,15 @@ public class World : MonoBehaviour
 
                 }
             }
-        }       
+        }
+		//TREE PASS//
+		if (yPos==terrainHeight)
+		{
+			if (Noise.Get2DPerlin(new Vector2(pos.x,pos.z),0,biome.treeZoneScale)>biome.treeZoneThreshold)
+			{
+				voxelValue = 1;
+			}
+		}
         return voxelValue;
 
     }

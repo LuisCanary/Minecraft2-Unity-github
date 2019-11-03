@@ -103,6 +103,7 @@ public class Chunk
 		vertexIndex = 0;
 		vertices.Clear();
 		triangles.Clear();
+		transparentTriangles.Clear();
 		uvs.Clear();
 	}
 
@@ -175,14 +176,11 @@ public class Chunk
         int y = Mathf.FloorToInt(pos.y);
         int z = Mathf.FloorToInt(pos.z);
 
-        if (!IsVoxelInChunk(x,y,z))
-        {
+        if (!IsVoxelInChunk(x,y,z))     
             return world.CheckIfVoxelTransparent(pos+position);
-        }
-        else
-        {
-            return world.blockTypes[voxelMap[x, y, z]].isTransparent;
-        }
+
+				return world.blockTypes[voxelMap[x, y, z]].isTransparent;
+        
 
     }
 
@@ -199,20 +197,25 @@ public class Chunk
 	}
 
 	void UpdateMeshData(Vector3 pos)
-    {
+	{
+
 		byte blockID = voxelMap[(int)pos.x, (int)pos.y, (int)pos.z];
+
 		bool isTransparent = world.blockTypes[blockID].isTransparent;
 
 		for (int p = 0; p < 6; p++)
-        {
-            if (CheckVoxel(pos + VoxelData.faceChecks[p]))
-            {
-                vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 0]]);
-                vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 1]]);
-                vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 2]]);
-                vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 3]]);
+		{
 
-                AddTexture(world.blockTypes[blockID].GetTextureID(p));
+			if (CheckVoxel(pos + VoxelData.faceChecks[p]))
+			{
+
+				vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 0]]);
+				vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 1]]);
+				vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 2]]);
+				vertices.Add(pos + VoxelData.voxelVerts[VoxelData.voxelTris[p, 3]]);
+
+				AddTexture(world.blockTypes[blockID].GetTextureID(p));
+
 				if (!isTransparent)
 				{
 					triangles.Add(vertexIndex);
@@ -232,13 +235,12 @@ public class Chunk
 					transparentTriangles.Add(vertexIndex + 3);
 				}
 
-                vertexIndex += 4;
+				vertexIndex += 4;
 
-            }
-        }
-    }
-
-    void CreateMesh()
+			}
+		}
+	}
+	void CreateMesh()
     {
 
         Mesh mesh = new Mesh();

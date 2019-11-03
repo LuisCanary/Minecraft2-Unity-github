@@ -11,6 +11,13 @@ public class BiomeAttributes :ScriptableObject
     public int solidGroundHeight;
     public int terrainHeight;
     public float terrainScale;
+
+	[Header("Tress")]
+	public float treeZoneScale=1.3f;
+	public float treeZoneThreshold=0.6f;
+			
+
+
     public Lode[] lodes;
 }
 

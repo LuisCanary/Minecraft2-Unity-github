@@ -745,7 +745,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_BoundingSphereOverride: {x: NaN, y: 3.1e-44, z: 4.5918e-41, w: 0}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -1242,6 +1242,7 @@ MonoBehaviour:
   jumpForce: 5
   gravity: -9.8
   playerWidth: 0.3
+  boundsTolerance: 0.1
   highlightBlock: {fileID: 1045612818}
   placeBlock: {fileID: 1434851190}
   checkIncrement: 0.1
@@ -2385,7 +2386,7 @@ MonoBehaviour:
   blockTypes:
   - blockName: Air
     isSolid: 0
-    isTransparent: 0
+    isTransparent: 1
     icon: {fileID: 0}
     backFaceTexture: 0
     frontFaceTexture: 0

@@ -3,7 +3,13 @@ guid: e584ac0160d4ff642a1a37b10387a526
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - biome: {instanceID: 0}
+  - player: {instanceID: 0}
+  - material: {fileID: 2100000, guid: a4b8e16d568120740bbd61751ab8d483, type: 2}
+  - transparentMaterial: {fileID: 2100000, guid: 0d7bf28a4d9946a49a3bf8f049714444,
+      type: 2}
+  - debugScreen: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

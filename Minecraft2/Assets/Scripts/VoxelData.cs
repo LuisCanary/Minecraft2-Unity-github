@@ -16,7 +16,7 @@ public static class VoxelData
     public static readonly int ViewDistanceInChunks = 5;
 
 
-    public static readonly int TextureAtLastSizeInBlock = 4;
+    public static readonly int TextureAtLastSizeInBlock = 16;
     public static float NormalizedTextureSize
     {
         get { return 1f / (float)TextureAtLastSizeInBlock; }
