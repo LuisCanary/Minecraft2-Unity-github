@@ -55,8 +55,16 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        GetPlayerInputs();
-		placeCursorBlocks();
+		if (Input.GetKeyDown(KeyCode.I))
+		{
+			world.inUI = !world.inUI;
+		}
+
+		if (!world.inUI)
+		{
+			GetPlayerInputs();
+			placeCursorBlocks();
+		}
     }
     void Jump()
     {
