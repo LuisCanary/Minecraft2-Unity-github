@@ -4,9 +4,18 @@ using UnityEngine;
 
 public class World : MonoBehaviour
 {
-
+	[Header("World Generation Values")]
 	public int seed;
 	public BiomeAttributes biome;
+
+	[Header("Performance")]
+	public bool enableThreading;
+
+
+	[Range(0.99f,0)]
+	public float globalLightLevel;
+	public Color day;
+	public Color night;
 
 	public Transform player;
 	public Vector3 spawnPosition;
@@ -36,6 +45,8 @@ public class World : MonoBehaviour
 
 	public GameObject debugScreen;
 
+	public GameObject creativeInventoryWindow;
+	public GameObject cursorSlot;
 
 	private void Start()
 	{
@@ -50,6 +61,11 @@ public class World : MonoBehaviour
 	{
 		playerChunkCoord = GetChunkCoordFromVector3(player.position);
 
+		Shader.SetGlobalFloat("GlobalLightLevel",globalLightLevel);
+		Camera.main.backgroundColor = Color.Lerp(day, night,globalLightLevel);
+
+
+		//Only update the chunk if the player has moved from the chunk they were previously on.
 		if (!playerChunkCoord.Equals(playerLastChunkCoord))
 		{
 			CheckViewDistance();
@@ -257,7 +273,25 @@ public class World : MonoBehaviour
 	public bool inUI
 	{
 		get { return _inUI; }
-		set { _inUI = value; }
+		set { _inUI = value;
+
+			if (_inUI)
+			{ 
+				Cursor.lockState = CursorLockMode.None;
+				creativeInventoryWindow.SetActive(true);
+				cursorSlot.SetActive(true);
+			}
+			else
+			{
+				Cursor.lockState = CursorLockMode.Locked;
+				creativeInventoryWindow.SetActive(false);
+				cursorSlot.SetActive(false);
+
+
+			}
+
+
+		}
 	}
 
 

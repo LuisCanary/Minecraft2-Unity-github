@@ -32,7 +32,7 @@ public class Player : MonoBehaviour
 	public float checkIncrement = 0.1f;
 	public float reach = 8f;
 
-	public byte selectedBlockIndex = 1;
+	public ToolBar toolBar;
 
     private void Start()
     {
@@ -43,8 +43,10 @@ public class Player : MonoBehaviour
 
 	}
 	private void FixedUpdate()
-    {       
-        CalculateVelocity();
+    {
+		if (!world.inUI)
+			CalculateVelocity();
+		
         if (jumpRequest)
             Jump();
 
@@ -120,7 +122,11 @@ public class Player : MonoBehaviour
 			//Place block
 			if (Input.GetMouseButtonDown(1))
 			{
-				world.GetChuckFromVector3(placeBlock.position).EditVoxel(placeBlock.position, selectedBlockIndex);
+				if (toolBar.slots[toolBar.slotIndex].HasItem)
+				{
+					world.GetChuckFromVector3(placeBlock.position).EditVoxel(placeBlock.position, toolBar.slots[toolBar.slotIndex].itemSlot.stack.id);
+					toolBar.slots[toolBar.slotIndex].itemSlot.Take(1);
+				}
 			}
 		}
     }

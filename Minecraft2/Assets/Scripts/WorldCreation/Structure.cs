@@ -19,7 +19,7 @@ public static class Structure
 		}
 		for (int x = -3; x < 4; x++)
 		{
-			for (int y = -3; y < 7; y++)
+			for (int y = 0; y < 7; y++)
 			{
 				for (int z = -3; z < 4; z++)
 				{
