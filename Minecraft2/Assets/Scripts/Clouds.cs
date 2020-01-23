@@ -84,7 +84,7 @@ public class Clouds : MonoBehaviour
 	private int RoundToCloud(float value)
 	{
 
-		return Mathf.FloorToInt((value / cloudTileSize) * cloudTileSize);
+		return Mathf.FloorToInt(value / cloudTileSize) * cloudTileSize;
 	}
 
 
@@ -142,7 +142,7 @@ public class Clouds : MonoBehaviour
 		GameObject newCloudTile = new GameObject();
 		newCloudTile.transform.position = position;
 		newCloudTile.transform.parent = transform;
-		newCloudTile.name = "Cloud " + position.x + ", " + position.z;
+		newCloudTile.name = "Clouds " + position.x + ", " + position.z;
 		MeshFilter mF = newCloudTile.AddComponent<MeshFilter>();
 		MeshRenderer mR = newCloudTile.AddComponent<MeshRenderer>();
 

@@ -76,7 +76,7 @@ public class World : MonoBehaviour
 
 		SetGlobalLightValue();
 
-		spawnPosition = new Vector3(VoxelData.WorldCentre, VoxelData.ChunkHeight - 50f, (VoxelData.WorldSizeInChunks * VoxelData.WorldCentre));
+		spawnPosition = new Vector3(VoxelData.WorldCentre, VoxelData.ChunkHeight - 50f, VoxelData.WorldCentre);
 		GenerateWorld();
 		playerLastChunkCoord = GetChunkCoordFromVector3(player.position);
 
