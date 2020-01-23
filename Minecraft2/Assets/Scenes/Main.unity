@@ -2263,7 +2263,6 @@ MonoBehaviour:
     enableThreading: 1
     enableAnimatedChunks: 0
     mouseSensitivity: 2
-    seed: 0
   biomes:
   - {fileID: 11400000, guid: 97e6379ad93a0004bb2d522eb85647bc, type: 2}
   - {fileID: 11400000, guid: 21d7e1c4c04ef4049b95d6b46a83df9f, type: 2}
@@ -2430,6 +2429,7 @@ MonoBehaviour:
     bottomFaceTexture: 19
     leftFaceTexture: 18
     rightFaceTexture: 18
+  clouds: {fileID: 2146224434}
   debugScreen: {fileID: 786222444}
   creativeInventoryWindow: {fileID: 1165174601}
   cursorSlot: {fileID: 355340599}
@@ -2747,6 +2747,53 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c30e753c700171e4c9809acf53bf6b03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &2146224430
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2146224431}
+  - component: {fileID: 2146224434}
+  m_Layer: 0
+  m_Name: Clouds
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2146224431
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2146224430}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2146224434
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2146224430}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3c766084ab1f1841b6e34720782f729, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cloudHeight: 100
+  cloudPattern: {fileID: 2800000, guid: 97e640f4781f6834a931ea9191f853b5, type: 3}
+  cloudMaterial: {fileID: 2100000, guid: 620a9d2dd44229b49b5f2c90782a7768, type: 2}
+  world: {fileID: 2004056688}
 --- !u!1001 &1372429104742830927
 PrefabInstance:
   m_ObjectHideFlags: 0
