@@ -5,6 +5,7 @@ using UnityEngine;
 public class Clouds : MonoBehaviour
 {
 	public int cloudHeight = 100;
+	public int cloudDepth = 4;
 
 	[SerializeField]
 	private Texture2D cloudPattern = null;
@@ -38,6 +39,9 @@ public class Clouds : MonoBehaviour
 
 	private void LoadCloudData()
 	{
+		if (world.settings.clouds == CloudStyle.Off)
+			return;
+
 		cloudData = new bool[cloudTexWidth, cloudTexWidth];
 		Color[] cloudTex = cloudPattern.GetPixels();
 
@@ -55,12 +59,24 @@ public class Clouds : MonoBehaviour
 
 	private void CreateClouds()
 	{
+		if (world.settings.clouds == CloudStyle.Off)
+			return;
+
 		for (int x = 0; x < cloudTexWidth; x+=cloudTileSize)
 		{
 			for (int y = 0; y < cloudTexWidth; y += cloudTileSize)
 			{
+
+				Mesh cloudMesh;
+				if (world.settings.clouds == CloudStyle.Fast)
+					cloudMesh = CreateFastCloudMesh(x,y);
+				else
+					cloudMesh = CreateFancyCloudMesh(x,y);
+
 				Vector3 position = new Vector3(x, cloudHeight, y);
-				clouds.Add(CloudTilePosFromV3(position), CreateCloudTile(CreateCloudMesh(x, y), position));
+				position += transform.position - new Vector3(cloudTexWidth / 2f, 0f, cloudTexWidth / 2f);
+				position.y = cloudHeight;
+				clouds.Add(CloudTilePosFromV3(position), CreateCloudTile(cloudMesh, position));
 			}
 		}
 
@@ -68,6 +84,9 @@ public class Clouds : MonoBehaviour
 
 	public void UpdateClouds()
 	{
+		if (world.settings.clouds == CloudStyle.Off)
+			return;
+
 		for (int x = 0; x < cloudTexWidth; x += cloudTileSize)
 		{
 			for (int y = 0; y < cloudTexWidth; y += cloudTileSize)
@@ -88,42 +107,42 @@ public class Clouds : MonoBehaviour
 	}
 
 
-	private Mesh CreateCloudMesh(int x, int z)
+	private Mesh CreateFastCloudMesh(int x, int z)
 	{
 		List<Vector3> vertices = new List<Vector3>();
 		List<int> triangles = new List<int>();
 		List<Vector3> normals = new List<Vector3>();
-		int verCount = 0;
+		int vertCount = 0;
 
 		for (int xIncrement = 0; xIncrement < cloudTileSize; xIncrement++)
 		{
-			for (int ZIncrement = 0; ZIncrement < cloudTileSize; ZIncrement++)
+			for (int zIncrement = 0; zIncrement < cloudTileSize; zIncrement++)
 			{
 				int xVal = x + xIncrement;
-				int zVal = z + ZIncrement;
+				int zVal = z + zIncrement;
 
 				if (cloudData[xVal, zVal])
 				{
 					//Add four vertices for cloud face
-					vertices.Add(new Vector3(xIncrement, 0, ZIncrement));
-					vertices.Add(new Vector3(xIncrement, 0, ZIncrement + 1));
-					vertices.Add(new Vector3(xIncrement + 1, 0, ZIncrement + 1));
-					vertices.Add(new Vector3(xIncrement + 1, 0, ZIncrement));
+					vertices.Add(new Vector3(xIncrement, 0, zIncrement));
+					vertices.Add(new Vector3(xIncrement, 0, zIncrement + 1));
+					vertices.Add(new Vector3(xIncrement + 1, 0, zIncrement + 1));
+					vertices.Add(new Vector3(xIncrement + 1, 0, zIncrement));
 
 					//We know what direction our faces are... facing, so we just add them directly.
 					for (int i = 0; i < 4; i++)
 						normals.Add(Vector3.down);
 
 					//Add first triangle
-					triangles.Add(verCount + 1);
-					triangles.Add(verCount);
-					triangles.Add(verCount + 2);
+					triangles.Add(vertCount + 1);
+					triangles.Add(vertCount);
+					triangles.Add(vertCount + 2);
 					//Add second triangle
-					triangles.Add(verCount + 2);
-					triangles.Add(verCount);
-					triangles.Add(verCount + 3);
+					triangles.Add(vertCount + 2);
+					triangles.Add(vertCount);
+					triangles.Add(vertCount + 3);
 					//Increment vertCount
-					verCount += 4;
+					vertCount += 4;
 
 
 				}
@@ -135,6 +154,85 @@ public class Clouds : MonoBehaviour
 		mesh.triangles = triangles.ToArray();
 		mesh.normals = normals.ToArray();
 		return mesh;
+	}
+
+	private Mesh CreateFancyCloudMesh(int x, int z)
+	{
+		List<Vector3> vertices = new List<Vector3>();
+		List<int> triangles = new List<int>();
+		List<Vector3> normals = new List<Vector3>();
+		int vertCount = 0;
+
+		for (int xIncrement = 0; xIncrement < cloudTileSize; xIncrement++)
+		{
+			for (int zIncrement = 0; zIncrement < cloudTileSize; zIncrement++)
+			{
+				int xVal = x + xIncrement;
+				int zVal = z + zIncrement;
+
+				if (cloudData[xVal, zVal])
+				{
+					//Loop through neighbour points using faceCheek array.
+					for (int p = 0; p < 6; p++)
+					{
+						//If the current neighbour has no cloud, draw this face.
+						if (!CheckCloudData(new Vector3Int(xVal, 0, zVal) + VoxelData.faceChecks[p]))
+						{
+							//Add our four vertices for this face.
+							for (int i = 0; i < 4; i++)
+							{
+								Vector3 vert = new Vector3Int(xIncrement, 0, zIncrement);
+								vert += VoxelData.voxelVerts[VoxelData.voxelTris[p, i]];
+								vert.y *= cloudDepth;
+								vertices.Add(vert);
+
+							}
+							for (int i = 0; i < 4; i++)
+								normals.Add(VoxelData.faceChecks[p]);
+
+							triangles.Add(vertCount);
+							triangles.Add(vertCount+1);
+							triangles.Add(vertCount+2);
+							triangles.Add(vertCount+2);
+							triangles.Add(vertCount+1);
+							triangles.Add(vertCount+3);
+
+							vertCount+=4;
+						}
+					}
+
+				}
+			}
+		}
+
+		Mesh mesh = new Mesh();
+		mesh.vertices = vertices.ToArray();
+		mesh.triangles = triangles.ToArray();
+		mesh.normals = normals.ToArray();
+		return mesh;
+
+	}
+
+	//Returns true or false depending on if there is cloud at the given point
+
+	private bool CheckCloudData(Vector3Int point)
+	{
+
+		//Because clouds are 2D, if y is above or below zero, return false
+		if (point.y != 0)
+			return false;
+
+		int x = point.x;
+		int z = point.z;
+
+		//If the x or z value is outside of the clouddata range, wrap it around.
+		if (point.x < 0) x = cloudTexWidth - 1;
+		if (point.x > cloudTexWidth - 1) x = 0;
+		if (point.z < 0) z = cloudTexWidth - 1;
+		if (point.z > cloudTexWidth - 1) z = 0;
+
+		return cloudData[x, z];
+
 	}
 
 	private GameObject CreateCloudTile(Mesh mesh, Vector3 position)
@@ -166,5 +264,14 @@ public class Clouds : MonoBehaviour
 
 		return b;
 	}
+
+
+}
+public enum CloudStyle
+{
+	Off,
+	Fast,
+	Fancy
+
 
 }
