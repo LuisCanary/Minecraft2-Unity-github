@@ -75,7 +75,7 @@ public class World : MonoBehaviour
 	{
 		Debug.Log("Generating new world using seed"+VoxelData.seed);
 
-		worldData = SaveSystem.LoadWorld("Prototype");
+		worldData = SaveSystem.LoadWorld("Testing");
 
 		//string jsonExport = JsonUtility.ToJson(settings);
 
@@ -93,7 +93,7 @@ public class World : MonoBehaviour
 
 		spawnPosition = new Vector3(VoxelData.WorldCentre, VoxelData.ChunkHeight - 50f, VoxelData.WorldCentre);
 
-		//LoadWorld();
+		LoadWorld();// Error but i don't know why/////////
 
 		GenerateWorld();
 
@@ -138,8 +138,6 @@ public class World : MonoBehaviour
 			if (chunksToUpdate.Count > 0)
 				UpdateChunks();
 		}
-		
-
 		if (Input.GetKeyDown(KeyCode.F3))
 		{
 			debugScreen.SetActive(!debugScreen.activeSelf);
