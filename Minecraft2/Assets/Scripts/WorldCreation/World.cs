@@ -31,8 +31,7 @@ public class World : MonoBehaviour
 	public ChunkCoord playerChunkCoord;
 	ChunkCoord playerLastChunkCoord;
 
-	List<ChunkCoord> chunksToCreate = new List<ChunkCoord>();
-	public List<Chunk> chunksToUpdate = new List<Chunk>();
+	private List<Chunk> chunksToUpdate = new List<Chunk>();
 	public Queue<Chunk> chunksToDraw = new Queue<Chunk>();
 
 
@@ -87,7 +86,9 @@ public class World : MonoBehaviour
 		Random.InitState(VoxelData.seed);
 
 		Shader.SetGlobalFloat("minGlobalLightLevel",VoxelData.minLightLevel);
-		Shader.SetGlobalFloat("maxGlobalLightLevel",VoxelData.maxLightlevel);	
+		Shader.SetGlobalFloat("maxGlobalLightLevel",VoxelData.maxLightlevel);
+
+		LoadWorld();
 
 		SetGlobalLightValue();
 
@@ -95,7 +96,8 @@ public class World : MonoBehaviour
 
 		LoadWorld();// Error but i don't know why/////////
 
-		GenerateWorld();
+		player.position = spawnPosition;
+		CheckViewDistance();
 
 		playerLastChunkCoord = GetChunkCoordFromVector3(player.position);
 
@@ -121,10 +123,6 @@ public class World : MonoBehaviour
 		if (!playerChunkCoord.Equals(playerLastChunkCoord))
 		{
 			CheckViewDistance();
-		}
-		if (chunksToCreate.Count>0)
-		{
-			CreateChunk();
 		}
 		if (chunksToDraw.Count>0)
 		{			
@@ -161,32 +159,28 @@ public class World : MonoBehaviour
 
 	}
 
-	void GenerateWorld()
+	public void AddChunkToUpdate(Chunk chunk)
 	{
-
-		for (int x = (VoxelData.WorldSizeInChunks / 2) - settings.viewDistance; x < (VoxelData.WorldSizeInChunks / 2) + settings.viewDistance; x++)
-		{
-			for (int z = (VoxelData.WorldSizeInChunks / 2) - settings.viewDistance; z < (VoxelData.WorldSizeInChunks / 2) + settings.viewDistance; z++)
-			{
-
-				ChunkCoord newChunk = new ChunkCoord(x, z);
-				chunks[x, z] = new Chunk(newChunk);
-				chunksToCreate.Add(newChunk);
-
-			}
-		}
-
-		player.position = spawnPosition;
-		CheckViewDistance();
-
+		AddChunkToUpdate(chunk,false);
 	}
 
-	void CreateChunk()
-	{
 
-		ChunkCoord c = chunksToCreate[0];
-		chunksToCreate.RemoveAt(0);
-		chunks[c.x, c.z].Init();
+	public void AddChunkToUpdate(Chunk chunk, bool insert)
+	{
+		lock (ChunkUpdateThreadLock)
+		{
+			if (!chunksToUpdate.Contains(chunk))
+			{
+				if (insert)
+				{
+					chunksToUpdate.Insert(0,chunk);
+				}
+				else
+				{
+					chunksToUpdate.Add(chunk);
+				}
+			}
+		}
 	}
 
 	void UpdateChunks()
@@ -283,14 +277,9 @@ public class World : MonoBehaviour
                 if (IsChunkInWorld(thisChunkCoord))
                 {
                     if (chunks[x,z]==null)
-                    {
-						chunks[x, z] = new Chunk(thisChunkCoord);
-                        chunksToCreate.Add(thisChunkCoord);
-                    }
-                    else if(!chunks[x,z].isActive)
-                    {
-                        chunks[x, z].isActive = true;
-                    }
+					    chunks[x, z] = new Chunk(thisChunkCoord);
+
+                        chunks[x, z].isActive = true;                   
                     activeChunks.Add(thisChunkCoord);
                 }
                 for (int i = 0; i < previouslyActiveChunks.Count; i++)
@@ -475,7 +464,7 @@ public class BlockType
     public string blockName;
     public bool isSolid;
 	public bool renderNeighborFaces;
-	public float transparency;
+	public byte opacity;
 	public Sprite icon;
 
     [Header("Texture Values")]
