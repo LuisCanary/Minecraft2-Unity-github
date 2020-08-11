@@ -32,7 +32,7 @@ public static class VoxelData
     }
 
     public static readonly int TextureAtLastSizeInBlock = 16;
-    public static float NormalizedTextureSize
+    public static float NormalizedBlockTextureSize
     {
         get { return 1f / (float)TextureAtLastSizeInBlock; }
     }
